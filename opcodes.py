@@ -148,6 +148,13 @@ OP_MAP = {
     'selfdestruct': 0xff,
 }
 
+OPERATOR_MAP = {
+    '+': 'add',
+    '-': 'sub',
+    '*': 'mul',
+    '/': 'div',
+}
+
 def disassemble(assembly):
     bytecode = ""
     for opcode in assembly.split():

@@ -22,5 +22,5 @@ def pretty_print(result, indent=0):
     else:
         print("    " * indent + str(result))
 
-def get_functions(ast):
-    return [func['name'] for func in ast['body'] if func['type'] == 'function']
+def get_functions     (ast): return [func for func in ast['body'] if func['type'] == 'function']
+def get_function_names(ast): return [func['name'] for func in ast['body'] if func['type'] == 'function']

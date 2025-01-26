@@ -10,6 +10,9 @@ tokens = [
     'RETURNS',
     'RETURN',
     'PLUS',
+    'MINUS',
+    'DIVIDE',
+    'MULTIPLY',
     'NUMBER',
     'UINT',
     'SEMICOLON',
@@ -29,6 +32,9 @@ t_RPAREN    = r'\)'
 t_LBRACE    = r'\{'
 t_RBRACE    = r'\}'
 t_PLUS      = r'\+'
+t_MINUS     = r'\-'
+t_DIVIDE    = r'\/'
+t_MULTIPLY  = r'\*'
 t_SEMICOLON = r';'
 
 t_ignore = ' \t'

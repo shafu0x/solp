@@ -6,7 +6,10 @@ from opcodes import *
 contract = read_file('Test.sol')
 ast = parser.parse(contract)
 dis = dispatcher(ast)
+func = funcs(ast)
 bytecode = disassemble(dis)
 
-print(dis)
-print(bytecode)
+# print(contract)
+# print(dis)
+# print(bytecode)
+print(func)

@@ -45,7 +45,10 @@ def p_statement(p):
 
 def p_expression(p):
     '''expression : NUMBER
-                  | expression PLUS expression'''
+                  | expression PLUS expression
+                  | expression MINUS expression
+                  | expression DIVIDE expression
+                  | expression MULTIPLY expression'''
     if len(p) == 2:
         p[0] = {
             "type": "number",
@@ -54,7 +57,7 @@ def p_expression(p):
     else:
         p[0] = {
             "type": "binary_op",
-            "operator": "+",
+            "operator": p[2],  # "+" or "-"
             "left": p[1],
             "right": p[3],
         }
