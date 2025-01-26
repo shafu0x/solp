@@ -25,25 +25,35 @@ def dispatcher(ast):
 
     return ass
 
+def gen_binary_op(ast):
+    op    = ast['operator']
+    left  = ast['left']
+    right = ast['right']
+    if left ["type"] != "number": raise("Not a Number")
+    if right["type"] != "number": raise("Not a Number")
+    return f"""
+            PUSH32 {left['value']}
+            PUSH32 {right['value']}
+            {OPERATOR_MAP[op]}
+            """
+
+def gen_return(): # NOTE: can onyl return 32 bytes
+    return f"""
+            PUSH32 0x00
+            MSTORE
+            PUSH32 0x20
+            PUSH32 0x00
+            RETURN
+            """
+
 def funcs(ast):
     ass = ""
     functions = get_functions(ast)
     for f in functions:
-        if f['body'][0]['type'] == 'return':
-            value = f['body'][0]['value']
-            op    = value['operator']
-            left  = value['left']['value']
-            right = value['right']['value']
-            print(op, left, right)
+        value = f['body'][0]['value']
+        type  = value['type']
 
-            ass += f"""
-                    PUSH32 {left}
-                    PUSH32 {right}
-                    {OPERATOR_MAP[op]}
-                    PUSH32 0x00
-                    MSTORE
-                    PUSH32 0x20
-                    PUSH32 0x00
-                    RETURN
-                    """
+        if type == 'binary_op': ass += gen_binary_op(value)
+        ass += gen_return()
+
     return ass
