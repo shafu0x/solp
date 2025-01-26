@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CONTRACT DIVIDE FUNCTION IDENTIFIER LBRACE LPAREN MINUS MULTIPLY NUMBER PLUS PUBLIC RBRACE RETURN RETURNS RPAREN SEMICOLON UINTcontract : CONTRACT IDENTIFIER LBRACE contract_body RBRACEcontract_body : function_definition\n                     | contract_body function_definitionfunction_definition : FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACEfunction_body : statement\n                     | function_body statementstatement : RETURN expression SEMICOLONexpression : NUMBER\n                  | expression PLUS expression\n                  | expression MINUS expression\n                  | expression DIVIDE expression\n                  | expression MULTIPLY expression'
+_lr_signature = 'CONTRACT DIVIDE FUNCTION IDENTIFIER LBRACE LPAREN MINUS MULTIPLY NUMBER PLUS PUBLIC RBRACE RETURN RETURNS RPAREN SEMICOLON UINTcontract : CONTRACT IDENTIFIER LBRACE contract_body RBRACEcontract_body : contract_item\n                     | contract_body contract_itemcontract_item : function_definition\n                     | variable_declarationvariable_declaration : UINT PUBLIC IDENTIFIER SEMICOLONfunction_definition : FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACEfunction_body : statement\n                     | function_body statementstatement : RETURN expression SEMICOLONexpression : NUMBER\n                  | expression PLUS expression\n                  | expression MINUS expression\n                  | expression DIVIDE expression\n                  | expression MULTIPLY expression'
     
-_lr_action_items = {'CONTRACT':([0,],[2,]),'$end':([1,8,],[0,-1,]),'IDENTIFIER':([2,7,],[3,10,]),'LBRACE':([3,17,],[4,18,]),'FUNCTION':([4,5,6,9,22,],[7,7,-2,-3,-4,]),'RBRACE':([5,6,9,19,20,22,23,26,],[8,-2,-3,22,-5,-4,-6,-7,]),'LPAREN':([10,14,],[11,15,]),'RPAREN':([11,16,],[12,17,]),'PUBLIC':([12,],[13,]),'RETURNS':([13,],[14,]),'UINT':([15,],[16,]),'RETURN':([18,19,20,23,26,],[21,21,-5,-6,-7,]),'NUMBER':([21,27,28,29,30,],[25,25,25,25,25,]),'SEMICOLON':([24,25,31,32,33,34,],[26,-8,-9,-10,-11,-12,]),'PLUS':([24,25,31,32,33,34,],[27,-8,27,27,27,27,]),'MINUS':([24,25,31,32,33,34,],[28,-8,28,28,28,28,]),'DIVIDE':([24,25,31,32,33,34,],[29,-8,29,29,29,29,]),'MULTIPLY':([24,25,31,32,33,34,],[30,-8,30,30,30,30,]),}
+_lr_action_items = {'CONTRACT':([0,],[2,]),'$end':([1,11,],[0,-1,]),'IDENTIFIER':([2,9,14,],[3,13,16,]),'LBRACE':([3,23,],[4,24,]),'FUNCTION':([4,5,6,7,8,12,18,28,],[9,9,-2,-4,-5,-3,-6,-7,]),'UINT':([4,5,6,7,8,12,18,21,28,],[10,10,-2,-4,-5,-3,-6,22,-7,]),'RBRACE':([5,6,7,8,12,18,25,26,28,29,32,],[11,-2,-4,-5,-3,-6,28,-8,-7,-9,-10,]),'PUBLIC':([10,17,],[14,19,]),'LPAREN':([13,20,],[15,21,]),'RPAREN':([15,22,],[17,23,]),'SEMICOLON':([16,30,31,37,38,39,40,],[18,32,-11,-12,-13,-14,-15,]),'RETURNS':([19,],[20,]),'RETURN':([24,25,26,29,32,],[27,27,-8,-9,-10,]),'NUMBER':([27,33,34,35,36,],[31,31,31,31,31,]),'PLUS':([30,31,37,38,39,40,],[33,-11,33,33,33,33,]),'MINUS':([30,31,37,38,39,40,],[34,-11,34,34,34,34,]),'DIVIDE':([30,31,37,38,39,40,],[35,-11,35,35,35,35,]),'MULTIPLY':([30,31,37,38,39,40,],[36,-11,36,36,36,36,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'contract':([0,],[1,]),'contract_body':([4,],[5,]),'function_definition':([4,5,],[6,9,]),'function_body':([18,],[19,]),'statement':([18,19,],[20,23,]),'expression':([21,27,28,29,30,],[24,31,32,33,34,]),}
+_lr_goto_items = {'contract':([0,],[1,]),'contract_body':([4,],[5,]),'contract_item':([4,5,],[6,12,]),'function_definition':([4,5,],[7,7,]),'variable_declaration':([4,5,],[8,8,]),'function_body':([24,],[25,]),'statement':([24,25,],[26,29,]),'expression':([27,33,34,35,36,],[30,37,38,39,40,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -28,15 +28,18 @@ del _lr_goto_items
 _lr_productions = [
   ("S' -> contract","S'",1,None,None,None),
   ('contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE','contract',5,'p_contract','parser.py',6),
-  ('contract_body -> function_definition','contract_body',1,'p_contract_body','parser.py',14),
-  ('contract_body -> contract_body function_definition','contract_body',2,'p_contract_body','parser.py',15),
-  ('function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE','function_definition',12,'p_function_definition','parser.py',22),
-  ('function_body -> statement','function_body',1,'p_function_body','parser.py',32),
-  ('function_body -> function_body statement','function_body',2,'p_function_body','parser.py',33),
-  ('statement -> RETURN expression SEMICOLON','statement',3,'p_statement','parser.py',40),
-  ('expression -> NUMBER','expression',1,'p_expression','parser.py',47),
-  ('expression -> expression PLUS expression','expression',3,'p_expression','parser.py',48),
-  ('expression -> expression MINUS expression','expression',3,'p_expression','parser.py',49),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression','parser.py',50),
-  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','parser.py',51),
+  ('contract_body -> contract_item','contract_body',1,'p_contract_body','parser.py',14),
+  ('contract_body -> contract_body contract_item','contract_body',2,'p_contract_body','parser.py',15),
+  ('contract_item -> function_definition','contract_item',1,'p_contract_item','parser.py',22),
+  ('contract_item -> variable_declaration','contract_item',1,'p_contract_item','parser.py',23),
+  ('variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON','variable_declaration',4,'p_variable_declaration','parser.py',27),
+  ('function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE','function_definition',12,'p_function_definition','parser.py',36),
+  ('function_body -> statement','function_body',1,'p_function_body','parser.py',46),
+  ('function_body -> function_body statement','function_body',2,'p_function_body','parser.py',47),
+  ('statement -> RETURN expression SEMICOLON','statement',3,'p_statement','parser.py',54),
+  ('expression -> NUMBER','expression',1,'p_expression','parser.py',61),
+  ('expression -> expression PLUS expression','expression',3,'p_expression','parser.py',62),
+  ('expression -> expression MINUS expression','expression',3,'p_expression','parser.py',63),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression','parser.py',64),
+  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','parser.py',65),
 ]

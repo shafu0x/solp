@@ -11,12 +11,26 @@ def p_contract(p):
     }
 
 def p_contract_body(p):
-    '''contract_body : function_definition
-                     | contract_body function_definition'''
+    '''contract_body : contract_item
+                     | contract_body contract_item'''
     if len(p) == 2:
-        p[0] = [p[1]]  # Single function
+        p[0] = [p[1]]  # Single item (function or variable)
     else:
         p[0] = p[1] + [p[2]]  # Append to existing body
+
+def p_contract_item(p):
+    '''contract_item : function_definition
+                     | variable_declaration'''
+    p[0] = p[1]  # Either a function or a variable
+
+def p_variable_declaration(p):
+    '''variable_declaration : UINT PUBLIC IDENTIFIER SEMICOLON'''
+    p[0] = {
+        "type": "variable",
+        "data_type": "uint",
+        "visibility": "public",
+        "name": p[3],
+    }
 
 def p_function_definition(p):
     '''function_definition : FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE'''

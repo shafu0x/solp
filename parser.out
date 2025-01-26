@@ -4,47 +4,52 @@ Grammar
 
 Rule 0     S' -> contract
 Rule 1     contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE
-Rule 2     contract_body -> function_definition
-Rule 3     contract_body -> contract_body function_definition
-Rule 4     function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
-Rule 5     function_body -> statement
-Rule 6     function_body -> function_body statement
-Rule 7     statement -> RETURN expression SEMICOLON
-Rule 8     expression -> NUMBER
-Rule 9     expression -> expression PLUS expression
-Rule 10    expression -> expression MINUS expression
-Rule 11    expression -> expression DIVIDE expression
-Rule 12    expression -> expression MULTIPLY expression
+Rule 2     contract_body -> contract_item
+Rule 3     contract_body -> contract_body contract_item
+Rule 4     contract_item -> function_definition
+Rule 5     contract_item -> variable_declaration
+Rule 6     variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON
+Rule 7     function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+Rule 8     function_body -> statement
+Rule 9     function_body -> function_body statement
+Rule 10    statement -> RETURN expression SEMICOLON
+Rule 11    expression -> NUMBER
+Rule 12    expression -> expression PLUS expression
+Rule 13    expression -> expression MINUS expression
+Rule 14    expression -> expression DIVIDE expression
+Rule 15    expression -> expression MULTIPLY expression
 
 Terminals, with rules where they appear
 
 CONTRACT             : 1
-DIVIDE               : 11
-FUNCTION             : 4
-IDENTIFIER           : 1 4
-LBRACE               : 1 4
-LPAREN               : 4 4
-MINUS                : 10
-MULTIPLY             : 12
-NUMBER               : 8
-PLUS                 : 9
-PUBLIC               : 4
-RBRACE               : 1 4
-RETURN               : 7
-RETURNS              : 4
-RPAREN               : 4 4
-SEMICOLON            : 7
-UINT                 : 4
+DIVIDE               : 14
+FUNCTION             : 7
+IDENTIFIER           : 1 6 7
+LBRACE               : 1 7
+LPAREN               : 7 7
+MINUS                : 13
+MULTIPLY             : 15
+NUMBER               : 11
+PLUS                 : 12
+PUBLIC               : 6 7
+RBRACE               : 1 7
+RETURN               : 10
+RETURNS              : 7
+RPAREN               : 7 7
+SEMICOLON            : 6 10
+UINT                 : 6 7
 error                : 
 
 Nonterminals, with rules where they appear
 
 contract             : 0
 contract_body        : 1 3
-expression           : 7 9 9 10 10 11 11 12 12
-function_body        : 4 6
-function_definition  : 2 3
-statement            : 5 6
+contract_item        : 2 3
+expression           : 10 12 12 13 13 14 14 15 15
+function_body        : 7 9
+function_definition  : 4
+statement            : 8 9
+variable_declaration : 5
 
 Parsing method: LALR
 
@@ -80,369 +85,432 @@ state 3
 state 4
 
     (1) contract -> CONTRACT IDENTIFIER LBRACE . contract_body RBRACE
-    (2) contract_body -> . function_definition
-    (3) contract_body -> . contract_body function_definition
-    (4) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (2) contract_body -> . contract_item
+    (3) contract_body -> . contract_body contract_item
+    (4) contract_item -> . function_definition
+    (5) contract_item -> . variable_declaration
+    (7) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (6) variable_declaration -> . UINT PUBLIC IDENTIFIER SEMICOLON
 
-    FUNCTION        shift and go to state 7
+    FUNCTION        shift and go to state 9
+    UINT            shift and go to state 10
 
     contract_body                  shift and go to state 5
-    function_definition            shift and go to state 6
+    contract_item                  shift and go to state 6
+    function_definition            shift and go to state 7
+    variable_declaration           shift and go to state 8
 
 state 5
 
     (1) contract -> CONTRACT IDENTIFIER LBRACE contract_body . RBRACE
-    (3) contract_body -> contract_body . function_definition
-    (4) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (3) contract_body -> contract_body . contract_item
+    (4) contract_item -> . function_definition
+    (5) contract_item -> . variable_declaration
+    (7) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (6) variable_declaration -> . UINT PUBLIC IDENTIFIER SEMICOLON
 
-    RBRACE          shift and go to state 8
-    FUNCTION        shift and go to state 7
+    RBRACE          shift and go to state 11
+    FUNCTION        shift and go to state 9
+    UINT            shift and go to state 10
 
-    function_definition            shift and go to state 9
+    contract_item                  shift and go to state 12
+    function_definition            shift and go to state 7
+    variable_declaration           shift and go to state 8
 
 state 6
 
-    (2) contract_body -> function_definition .
+    (2) contract_body -> contract_item .
 
-    RBRACE          reduce using rule 2 (contract_body -> function_definition .)
-    FUNCTION        reduce using rule 2 (contract_body -> function_definition .)
+    RBRACE          reduce using rule 2 (contract_body -> contract_item .)
+    FUNCTION        reduce using rule 2 (contract_body -> contract_item .)
+    UINT            reduce using rule 2 (contract_body -> contract_item .)
 
 
 state 7
 
-    (4) function_definition -> FUNCTION . IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (4) contract_item -> function_definition .
 
-    IDENTIFIER      shift and go to state 10
+    RBRACE          reduce using rule 4 (contract_item -> function_definition .)
+    FUNCTION        reduce using rule 4 (contract_item -> function_definition .)
+    UINT            reduce using rule 4 (contract_item -> function_definition .)
 
 
 state 8
+
+    (5) contract_item -> variable_declaration .
+
+    RBRACE          reduce using rule 5 (contract_item -> variable_declaration .)
+    FUNCTION        reduce using rule 5 (contract_item -> variable_declaration .)
+    UINT            reduce using rule 5 (contract_item -> variable_declaration .)
+
+
+state 9
+
+    (7) function_definition -> FUNCTION . IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    IDENTIFIER      shift and go to state 13
+
+
+state 10
+
+    (6) variable_declaration -> UINT . PUBLIC IDENTIFIER SEMICOLON
+
+    PUBLIC          shift and go to state 14
+
+
+state 11
 
     (1) contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE .
 
     $end            reduce using rule 1 (contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE .)
 
 
-state 9
-
-    (3) contract_body -> contract_body function_definition .
-
-    RBRACE          reduce using rule 3 (contract_body -> contract_body function_definition .)
-    FUNCTION        reduce using rule 3 (contract_body -> contract_body function_definition .)
-
-
-state 10
-
-    (4) function_definition -> FUNCTION IDENTIFIER . LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
-
-    LPAREN          shift and go to state 11
-
-
-state 11
-
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN . RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
-
-    RPAREN          shift and go to state 12
-
-
 state 12
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN . PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (3) contract_body -> contract_body contract_item .
 
-    PUBLIC          shift and go to state 13
+    RBRACE          reduce using rule 3 (contract_body -> contract_body contract_item .)
+    FUNCTION        reduce using rule 3 (contract_body -> contract_body contract_item .)
+    UINT            reduce using rule 3 (contract_body -> contract_body contract_item .)
 
 
 state 13
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC . RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
-
-    RETURNS         shift and go to state 14
-
-
-state 14
-
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS . LPAREN UINT RPAREN LBRACE function_body RBRACE
+    (7) function_definition -> FUNCTION IDENTIFIER . LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
 
     LPAREN          shift and go to state 15
 
 
+state 14
+
+    (6) variable_declaration -> UINT PUBLIC . IDENTIFIER SEMICOLON
+
+    IDENTIFIER      shift and go to state 16
+
+
 state 15
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN . UINT RPAREN LBRACE function_body RBRACE
-
-    UINT            shift and go to state 16
-
-
-state 16
-
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT . RPAREN LBRACE function_body RBRACE
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN . RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
 
     RPAREN          shift and go to state 17
 
 
+state 16
+
+    (6) variable_declaration -> UINT PUBLIC IDENTIFIER . SEMICOLON
+
+    SEMICOLON       shift and go to state 18
+
+
 state 17
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN . LBRACE function_body RBRACE
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN . PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
 
-    LBRACE          shift and go to state 18
+    PUBLIC          shift and go to state 19
 
 
 state 18
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE . function_body RBRACE
-    (5) function_body -> . statement
-    (6) function_body -> . function_body statement
-    (7) statement -> . RETURN expression SEMICOLON
+    (6) variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON .
 
-    RETURN          shift and go to state 21
+    RBRACE          reduce using rule 6 (variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON .)
+    FUNCTION        reduce using rule 6 (variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON .)
+    UINT            reduce using rule 6 (variable_declaration -> UINT PUBLIC IDENTIFIER SEMICOLON .)
 
-    function_body                  shift and go to state 19
-    statement                      shift and go to state 20
 
 state 19
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body . RBRACE
-    (6) function_body -> function_body . statement
-    (7) statement -> . RETURN expression SEMICOLON
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC . RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
 
-    RBRACE          shift and go to state 22
-    RETURN          shift and go to state 21
+    RETURNS         shift and go to state 20
 
-    statement                      shift and go to state 23
 
 state 20
 
-    (5) function_body -> statement .
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS . LPAREN UINT RPAREN LBRACE function_body RBRACE
 
-    RBRACE          reduce using rule 5 (function_body -> statement .)
-    RETURN          reduce using rule 5 (function_body -> statement .)
+    LPAREN          shift and go to state 21
 
 
 state 21
 
-    (7) statement -> RETURN . expression SEMICOLON
-    (8) expression -> . NUMBER
-    (9) expression -> . expression PLUS expression
-    (10) expression -> . expression MINUS expression
-    (11) expression -> . expression DIVIDE expression
-    (12) expression -> . expression MULTIPLY expression
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN . UINT RPAREN LBRACE function_body RBRACE
 
-    NUMBER          shift and go to state 25
+    UINT            shift and go to state 22
 
-    expression                     shift and go to state 24
 
 state 22
 
-    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT . RPAREN LBRACE function_body RBRACE
 
-    RBRACE          reduce using rule 4 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
-    FUNCTION        reduce using rule 4 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
+    RPAREN          shift and go to state 23
 
 
 state 23
 
-    (6) function_body -> function_body statement .
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN . LBRACE function_body RBRACE
 
-    RBRACE          reduce using rule 6 (function_body -> function_body statement .)
-    RETURN          reduce using rule 6 (function_body -> function_body statement .)
+    LBRACE          shift and go to state 24
 
 
 state 24
 
-    (7) statement -> RETURN expression . SEMICOLON
-    (9) expression -> expression . PLUS expression
-    (10) expression -> expression . MINUS expression
-    (11) expression -> expression . DIVIDE expression
-    (12) expression -> expression . MULTIPLY expression
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE . function_body RBRACE
+    (8) function_body -> . statement
+    (9) function_body -> . function_body statement
+    (10) statement -> . RETURN expression SEMICOLON
 
-    SEMICOLON       shift and go to state 26
-    PLUS            shift and go to state 27
-    MINUS           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    MULTIPLY        shift and go to state 30
+    RETURN          shift and go to state 27
 
+    function_body                  shift and go to state 25
+    statement                      shift and go to state 26
 
 state 25
 
-    (8) expression -> NUMBER .
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body . RBRACE
+    (9) function_body -> function_body . statement
+    (10) statement -> . RETURN expression SEMICOLON
 
-    SEMICOLON       reduce using rule 8 (expression -> NUMBER .)
-    PLUS            reduce using rule 8 (expression -> NUMBER .)
-    MINUS           reduce using rule 8 (expression -> NUMBER .)
-    DIVIDE          reduce using rule 8 (expression -> NUMBER .)
-    MULTIPLY        reduce using rule 8 (expression -> NUMBER .)
+    RBRACE          shift and go to state 28
+    RETURN          shift and go to state 27
 
+    statement                      shift and go to state 29
 
 state 26
 
-    (7) statement -> RETURN expression SEMICOLON .
+    (8) function_body -> statement .
 
-    RBRACE          reduce using rule 7 (statement -> RETURN expression SEMICOLON .)
-    RETURN          reduce using rule 7 (statement -> RETURN expression SEMICOLON .)
+    RBRACE          reduce using rule 8 (function_body -> statement .)
+    RETURN          reduce using rule 8 (function_body -> statement .)
 
 
 state 27
 
-    (9) expression -> expression PLUS . expression
-    (8) expression -> . NUMBER
-    (9) expression -> . expression PLUS expression
-    (10) expression -> . expression MINUS expression
-    (11) expression -> . expression DIVIDE expression
-    (12) expression -> . expression MULTIPLY expression
+    (10) statement -> RETURN . expression SEMICOLON
+    (11) expression -> . NUMBER
+    (12) expression -> . expression PLUS expression
+    (13) expression -> . expression MINUS expression
+    (14) expression -> . expression DIVIDE expression
+    (15) expression -> . expression MULTIPLY expression
 
-    NUMBER          shift and go to state 25
+    NUMBER          shift and go to state 31
 
-    expression                     shift and go to state 31
+    expression                     shift and go to state 30
 
 state 28
 
-    (10) expression -> expression MINUS . expression
-    (8) expression -> . NUMBER
-    (9) expression -> . expression PLUS expression
-    (10) expression -> . expression MINUS expression
-    (11) expression -> . expression DIVIDE expression
-    (12) expression -> . expression MULTIPLY expression
+    (7) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .
 
-    NUMBER          shift and go to state 25
+    RBRACE          reduce using rule 7 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
+    FUNCTION        reduce using rule 7 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
+    UINT            reduce using rule 7 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
 
-    expression                     shift and go to state 32
 
 state 29
 
-    (11) expression -> expression DIVIDE . expression
-    (8) expression -> . NUMBER
-    (9) expression -> . expression PLUS expression
-    (10) expression -> . expression MINUS expression
-    (11) expression -> . expression DIVIDE expression
-    (12) expression -> . expression MULTIPLY expression
+    (9) function_body -> function_body statement .
 
-    NUMBER          shift and go to state 25
+    RBRACE          reduce using rule 9 (function_body -> function_body statement .)
+    RETURN          reduce using rule 9 (function_body -> function_body statement .)
 
-    expression                     shift and go to state 33
 
 state 30
 
-    (12) expression -> expression MULTIPLY . expression
-    (8) expression -> . NUMBER
-    (9) expression -> . expression PLUS expression
-    (10) expression -> . expression MINUS expression
-    (11) expression -> . expression DIVIDE expression
-    (12) expression -> . expression MULTIPLY expression
+    (10) statement -> RETURN expression . SEMICOLON
+    (12) expression -> expression . PLUS expression
+    (13) expression -> expression . MINUS expression
+    (14) expression -> expression . DIVIDE expression
+    (15) expression -> expression . MULTIPLY expression
 
-    NUMBER          shift and go to state 25
+    SEMICOLON       shift and go to state 32
+    PLUS            shift and go to state 33
+    MINUS           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    MULTIPLY        shift and go to state 36
 
-    expression                     shift and go to state 34
 
 state 31
 
-    (9) expression -> expression PLUS expression .
-    (9) expression -> expression . PLUS expression
-    (10) expression -> expression . MINUS expression
-    (11) expression -> expression . DIVIDE expression
-    (12) expression -> expression . MULTIPLY expression
+    (11) expression -> NUMBER .
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for MULTIPLY resolved as shift
-    SEMICOLON       reduce using rule 9 (expression -> expression PLUS expression .)
-    PLUS            shift and go to state 27
-    MINUS           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    MULTIPLY        shift and go to state 30
-
-  ! PLUS            [ reduce using rule 9 (expression -> expression PLUS expression .) ]
-  ! MINUS           [ reduce using rule 9 (expression -> expression PLUS expression .) ]
-  ! DIVIDE          [ reduce using rule 9 (expression -> expression PLUS expression .) ]
-  ! MULTIPLY        [ reduce using rule 9 (expression -> expression PLUS expression .) ]
+    SEMICOLON       reduce using rule 11 (expression -> NUMBER .)
+    PLUS            reduce using rule 11 (expression -> NUMBER .)
+    MINUS           reduce using rule 11 (expression -> NUMBER .)
+    DIVIDE          reduce using rule 11 (expression -> NUMBER .)
+    MULTIPLY        reduce using rule 11 (expression -> NUMBER .)
 
 
 state 32
 
-    (10) expression -> expression MINUS expression .
-    (9) expression -> expression . PLUS expression
-    (10) expression -> expression . MINUS expression
-    (11) expression -> expression . DIVIDE expression
-    (12) expression -> expression . MULTIPLY expression
+    (10) statement -> RETURN expression SEMICOLON .
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for MULTIPLY resolved as shift
-    SEMICOLON       reduce using rule 10 (expression -> expression MINUS expression .)
-    PLUS            shift and go to state 27
-    MINUS           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    MULTIPLY        shift and go to state 30
-
-  ! PLUS            [ reduce using rule 10 (expression -> expression MINUS expression .) ]
-  ! MINUS           [ reduce using rule 10 (expression -> expression MINUS expression .) ]
-  ! DIVIDE          [ reduce using rule 10 (expression -> expression MINUS expression .) ]
-  ! MULTIPLY        [ reduce using rule 10 (expression -> expression MINUS expression .) ]
+    RBRACE          reduce using rule 10 (statement -> RETURN expression SEMICOLON .)
+    RETURN          reduce using rule 10 (statement -> RETURN expression SEMICOLON .)
 
 
 state 33
 
-    (11) expression -> expression DIVIDE expression .
-    (9) expression -> expression . PLUS expression
-    (10) expression -> expression . MINUS expression
-    (11) expression -> expression . DIVIDE expression
-    (12) expression -> expression . MULTIPLY expression
+    (12) expression -> expression PLUS . expression
+    (11) expression -> . NUMBER
+    (12) expression -> . expression PLUS expression
+    (13) expression -> . expression MINUS expression
+    (14) expression -> . expression DIVIDE expression
+    (15) expression -> . expression MULTIPLY expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for MULTIPLY resolved as shift
-    SEMICOLON       reduce using rule 11 (expression -> expression DIVIDE expression .)
-    PLUS            shift and go to state 27
-    MINUS           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    MULTIPLY        shift and go to state 30
+    NUMBER          shift and go to state 31
 
-  ! PLUS            [ reduce using rule 11 (expression -> expression DIVIDE expression .) ]
-  ! MINUS           [ reduce using rule 11 (expression -> expression DIVIDE expression .) ]
-  ! DIVIDE          [ reduce using rule 11 (expression -> expression DIVIDE expression .) ]
-  ! MULTIPLY        [ reduce using rule 11 (expression -> expression DIVIDE expression .) ]
-
+    expression                     shift and go to state 37
 
 state 34
 
-    (12) expression -> expression MULTIPLY expression .
-    (9) expression -> expression . PLUS expression
-    (10) expression -> expression . MINUS expression
-    (11) expression -> expression . DIVIDE expression
-    (12) expression -> expression . MULTIPLY expression
+    (13) expression -> expression MINUS . expression
+    (11) expression -> . NUMBER
+    (12) expression -> . expression PLUS expression
+    (13) expression -> . expression MINUS expression
+    (14) expression -> . expression DIVIDE expression
+    (15) expression -> . expression MULTIPLY expression
+
+    NUMBER          shift and go to state 31
+
+    expression                     shift and go to state 38
+
+state 35
+
+    (14) expression -> expression DIVIDE . expression
+    (11) expression -> . NUMBER
+    (12) expression -> . expression PLUS expression
+    (13) expression -> . expression MINUS expression
+    (14) expression -> . expression DIVIDE expression
+    (15) expression -> . expression MULTIPLY expression
+
+    NUMBER          shift and go to state 31
+
+    expression                     shift and go to state 39
+
+state 36
+
+    (15) expression -> expression MULTIPLY . expression
+    (11) expression -> . NUMBER
+    (12) expression -> . expression PLUS expression
+    (13) expression -> . expression MINUS expression
+    (14) expression -> . expression DIVIDE expression
+    (15) expression -> . expression MULTIPLY expression
+
+    NUMBER          shift and go to state 31
+
+    expression                     shift and go to state 40
+
+state 37
+
+    (12) expression -> expression PLUS expression .
+    (12) expression -> expression . PLUS expression
+    (13) expression -> expression . MINUS expression
+    (14) expression -> expression . DIVIDE expression
+    (15) expression -> expression . MULTIPLY expression
 
   ! shift/reduce conflict for PLUS resolved as shift
   ! shift/reduce conflict for MINUS resolved as shift
   ! shift/reduce conflict for DIVIDE resolved as shift
   ! shift/reduce conflict for MULTIPLY resolved as shift
-    SEMICOLON       reduce using rule 12 (expression -> expression MULTIPLY expression .)
-    PLUS            shift and go to state 27
-    MINUS           shift and go to state 28
-    DIVIDE          shift and go to state 29
-    MULTIPLY        shift and go to state 30
+    SEMICOLON       reduce using rule 12 (expression -> expression PLUS expression .)
+    PLUS            shift and go to state 33
+    MINUS           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    MULTIPLY        shift and go to state 36
 
-  ! PLUS            [ reduce using rule 12 (expression -> expression MULTIPLY expression .) ]
-  ! MINUS           [ reduce using rule 12 (expression -> expression MULTIPLY expression .) ]
-  ! DIVIDE          [ reduce using rule 12 (expression -> expression MULTIPLY expression .) ]
-  ! MULTIPLY        [ reduce using rule 12 (expression -> expression MULTIPLY expression .) ]
+  ! PLUS            [ reduce using rule 12 (expression -> expression PLUS expression .) ]
+  ! MINUS           [ reduce using rule 12 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 12 (expression -> expression PLUS expression .) ]
+  ! MULTIPLY        [ reduce using rule 12 (expression -> expression PLUS expression .) ]
+
+
+state 38
+
+    (13) expression -> expression MINUS expression .
+    (12) expression -> expression . PLUS expression
+    (13) expression -> expression . MINUS expression
+    (14) expression -> expression . DIVIDE expression
+    (15) expression -> expression . MULTIPLY expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+    SEMICOLON       reduce using rule 13 (expression -> expression MINUS expression .)
+    PLUS            shift and go to state 33
+    MINUS           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    MULTIPLY        shift and go to state 36
+
+  ! PLUS            [ reduce using rule 13 (expression -> expression MINUS expression .) ]
+  ! MINUS           [ reduce using rule 13 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 13 (expression -> expression MINUS expression .) ]
+  ! MULTIPLY        [ reduce using rule 13 (expression -> expression MINUS expression .) ]
+
+
+state 39
+
+    (14) expression -> expression DIVIDE expression .
+    (12) expression -> expression . PLUS expression
+    (13) expression -> expression . MINUS expression
+    (14) expression -> expression . DIVIDE expression
+    (15) expression -> expression . MULTIPLY expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+    SEMICOLON       reduce using rule 14 (expression -> expression DIVIDE expression .)
+    PLUS            shift and go to state 33
+    MINUS           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    MULTIPLY        shift and go to state 36
+
+  ! PLUS            [ reduce using rule 14 (expression -> expression DIVIDE expression .) ]
+  ! MINUS           [ reduce using rule 14 (expression -> expression DIVIDE expression .) ]
+  ! DIVIDE          [ reduce using rule 14 (expression -> expression DIVIDE expression .) ]
+  ! MULTIPLY        [ reduce using rule 14 (expression -> expression DIVIDE expression .) ]
+
+
+state 40
+
+    (15) expression -> expression MULTIPLY expression .
+    (12) expression -> expression . PLUS expression
+    (13) expression -> expression . MINUS expression
+    (14) expression -> expression . DIVIDE expression
+    (15) expression -> expression . MULTIPLY expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+    SEMICOLON       reduce using rule 15 (expression -> expression MULTIPLY expression .)
+    PLUS            shift and go to state 33
+    MINUS           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    MULTIPLY        shift and go to state 36
+
+  ! PLUS            [ reduce using rule 15 (expression -> expression MULTIPLY expression .) ]
+  ! MINUS           [ reduce using rule 15 (expression -> expression MULTIPLY expression .) ]
+  ! DIVIDE          [ reduce using rule 15 (expression -> expression MULTIPLY expression .) ]
+  ! MULTIPLY        [ reduce using rule 15 (expression -> expression MULTIPLY expression .) ]
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for PLUS in state 31 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 31 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 31 resolved as shift
-WARNING: shift/reduce conflict for MULTIPLY in state 31 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 32 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 32 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 32 resolved as shift
-WARNING: shift/reduce conflict for MULTIPLY in state 32 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 33 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 33 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 33 resolved as shift
-WARNING: shift/reduce conflict for MULTIPLY in state 33 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 34 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 34 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 34 resolved as shift
-WARNING: shift/reduce conflict for MULTIPLY in state 34 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 37 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 37 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 37 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 37 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 38 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 38 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 38 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 38 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 39 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 39 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 39 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 39 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 40 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 40 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 40 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 40 resolved as shift

@@ -1,4 +1,6 @@
 contract MyContract {
+    uint public value1;
+
     function add() public returns (uint) {
         return 1 + 2 * 4 - 2;
     }
