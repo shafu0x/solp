@@ -1,0 +1,289 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> contract
+Rule 1     contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE
+Rule 2     contract_body -> function_definition
+Rule 3     contract_body -> contract_body function_definition
+Rule 4     function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+Rule 5     function_body -> statement
+Rule 6     function_body -> function_body statement
+Rule 7     statement -> RETURN expression SEMICOLON
+Rule 8     expression -> NUMBER
+Rule 9     expression -> expression PLUS expression
+
+Terminals, with rules where they appear
+
+CONTRACT             : 1
+FUNCTION             : 4
+IDENTIFIER           : 1 4
+LBRACE               : 1 4
+LPAREN               : 4 4
+NUMBER               : 8
+PLUS                 : 9
+PUBLIC               : 4
+RBRACE               : 1 4
+RETURN               : 7
+RETURNS              : 4
+RPAREN               : 4 4
+SEMICOLON            : 7
+UINT                 : 4
+error                : 
+
+Nonterminals, with rules where they appear
+
+contract             : 0
+contract_body        : 1 3
+expression           : 7 9 9
+function_body        : 4 6
+function_definition  : 2 3
+statement            : 5 6
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . contract
+    (1) contract -> . CONTRACT IDENTIFIER LBRACE contract_body RBRACE
+
+    CONTRACT        shift and go to state 2
+
+    contract                       shift and go to state 1
+
+state 1
+
+    (0) S' -> contract .
+
+
+
+state 2
+
+    (1) contract -> CONTRACT . IDENTIFIER LBRACE contract_body RBRACE
+
+    IDENTIFIER      shift and go to state 3
+
+
+state 3
+
+    (1) contract -> CONTRACT IDENTIFIER . LBRACE contract_body RBRACE
+
+    LBRACE          shift and go to state 4
+
+
+state 4
+
+    (1) contract -> CONTRACT IDENTIFIER LBRACE . contract_body RBRACE
+    (2) contract_body -> . function_definition
+    (3) contract_body -> . contract_body function_definition
+    (4) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    FUNCTION        shift and go to state 7
+
+    contract_body                  shift and go to state 5
+    function_definition            shift and go to state 6
+
+state 5
+
+    (1) contract -> CONTRACT IDENTIFIER LBRACE contract_body . RBRACE
+    (3) contract_body -> contract_body . function_definition
+    (4) function_definition -> . FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    RBRACE          shift and go to state 8
+    FUNCTION        shift and go to state 7
+
+    function_definition            shift and go to state 9
+
+state 6
+
+    (2) contract_body -> function_definition .
+
+    RBRACE          reduce using rule 2 (contract_body -> function_definition .)
+    FUNCTION        reduce using rule 2 (contract_body -> function_definition .)
+
+
+state 7
+
+    (4) function_definition -> FUNCTION . IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    IDENTIFIER      shift and go to state 10
+
+
+state 8
+
+    (1) contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE .
+
+    $end            reduce using rule 1 (contract -> CONTRACT IDENTIFIER LBRACE contract_body RBRACE .)
+
+
+state 9
+
+    (3) contract_body -> contract_body function_definition .
+
+    RBRACE          reduce using rule 3 (contract_body -> contract_body function_definition .)
+    FUNCTION        reduce using rule 3 (contract_body -> contract_body function_definition .)
+
+
+state 10
+
+    (4) function_definition -> FUNCTION IDENTIFIER . LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    LPAREN          shift and go to state 11
+
+
+state 11
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN . RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    RPAREN          shift and go to state 12
+
+
+state 12
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN . PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    PUBLIC          shift and go to state 13
+
+
+state 13
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC . RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    RETURNS         shift and go to state 14
+
+
+state 14
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS . LPAREN UINT RPAREN LBRACE function_body RBRACE
+
+    LPAREN          shift and go to state 15
+
+
+state 15
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN . UINT RPAREN LBRACE function_body RBRACE
+
+    UINT            shift and go to state 16
+
+
+state 16
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT . RPAREN LBRACE function_body RBRACE
+
+    RPAREN          shift and go to state 17
+
+
+state 17
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN . LBRACE function_body RBRACE
+
+    LBRACE          shift and go to state 18
+
+
+state 18
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE . function_body RBRACE
+    (5) function_body -> . statement
+    (6) function_body -> . function_body statement
+    (7) statement -> . RETURN expression SEMICOLON
+
+    RETURN          shift and go to state 21
+
+    function_body                  shift and go to state 19
+    statement                      shift and go to state 20
+
+state 19
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body . RBRACE
+    (6) function_body -> function_body . statement
+    (7) statement -> . RETURN expression SEMICOLON
+
+    RBRACE          shift and go to state 22
+    RETURN          shift and go to state 21
+
+    statement                      shift and go to state 23
+
+state 20
+
+    (5) function_body -> statement .
+
+    RBRACE          reduce using rule 5 (function_body -> statement .)
+    RETURN          reduce using rule 5 (function_body -> statement .)
+
+
+state 21
+
+    (7) statement -> RETURN . expression SEMICOLON
+    (8) expression -> . NUMBER
+    (9) expression -> . expression PLUS expression
+
+    NUMBER          shift and go to state 25
+
+    expression                     shift and go to state 24
+
+state 22
+
+    (4) function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .
+
+    RBRACE          reduce using rule 4 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
+    FUNCTION        reduce using rule 4 (function_definition -> FUNCTION IDENTIFIER LPAREN RPAREN PUBLIC RETURNS LPAREN UINT RPAREN LBRACE function_body RBRACE .)
+
+
+state 23
+
+    (6) function_body -> function_body statement .
+
+    RBRACE          reduce using rule 6 (function_body -> function_body statement .)
+    RETURN          reduce using rule 6 (function_body -> function_body statement .)
+
+
+state 24
+
+    (7) statement -> RETURN expression . SEMICOLON
+    (9) expression -> expression . PLUS expression
+
+    SEMICOLON       shift and go to state 26
+    PLUS            shift and go to state 27
+
+
+state 25
+
+    (8) expression -> NUMBER .
+
+    SEMICOLON       reduce using rule 8 (expression -> NUMBER .)
+    PLUS            reduce using rule 8 (expression -> NUMBER .)
+
+
+state 26
+
+    (7) statement -> RETURN expression SEMICOLON .
+
+    RBRACE          reduce using rule 7 (statement -> RETURN expression SEMICOLON .)
+    RETURN          reduce using rule 7 (statement -> RETURN expression SEMICOLON .)
+
+
+state 27
+
+    (9) expression -> expression PLUS . expression
+    (8) expression -> . NUMBER
+    (9) expression -> . expression PLUS expression
+
+    NUMBER          shift and go to state 25
+
+    expression                     shift and go to state 28
+
+state 28
+
+    (9) expression -> expression PLUS expression .
+    (9) expression -> expression . PLUS expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+    SEMICOLON       reduce using rule 9 (expression -> expression PLUS expression .)
+    PLUS            shift and go to state 27
+
+  ! PLUS            [ reduce using rule 9 (expression -> expression PLUS expression .) ]
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 28 resolved as shift
