@@ -147,3 +147,13 @@ OP_MAP = {
     'invalid': 0xfe,
     'selfdestruct': 0xff,
 }
+
+def disassemble(assembly):
+    bytecode = ""
+    for opcode in assembly.split():
+        try:
+            bytecode += str(hex(OP_MAP[opcode.lower()]))[2:]
+        except KeyError:
+            bytecode += f"{opcode}"[2:]
+    
+    return bytecode
