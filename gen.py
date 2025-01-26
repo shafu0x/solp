@@ -26,14 +26,19 @@ def dispatcher(ast):
     return ass
 
 def gen_binary_op(ast):
-    op    = ast['operator']
-    left  = ast['left']
+    op = ast['operator']
+    left = ast['left']
     right = ast['right']
-    if left ["type"] != "number": raise("Not a Number")
-    if right["type"] != "number": raise("Not a Number")
+
+    if left["type"] == "number": left_code = f"PUSH32 {left['value']}"
+    else:                        left_code = gen_binary_op(left)
+
+    if right["type"] == "number": right_code = f"PUSH32 {right['value']}"
+    else:                         right_code = gen_binary_op(right)
+
     return f"""
-            PUSH32 {left['value']}
-            PUSH32 {right['value']}
+            {left_code}
+            {right_code}
             {OPERATOR_MAP[op]}
             """
 
@@ -56,4 +61,4 @@ def funcs(ast):
         if type == 'binary_op': ass += gen_binary_op(value)
         ass += gen_return()
 
-    return ass
+    return "\n".join(line.lstrip() for line in ass.splitlines() if line.strip())
